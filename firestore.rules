@@ -1,0 +1,33 @@
+rules_version = '2';
+
+// Deploy via: firebase deploy --only firestore:rules
+//
+// V1 is single-tenant — one groomer, one Firebase Auth account — so "signed
+// in" and "is the groomer" are the same thing for now. If this ever goes
+// multi-tenant, swap request.auth != null for a per-business ownership check
+// (e.g. resource.data.businessId == request.auth.token.businessId).
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /bookings/{bookingId} {
+      allow create: if true; // clients book without an account
+      allow read, update, delete: if request.auth != null;
+    }
+
+    match /enquiries/{enquiryId} {
+      allow create: if true;
+      allow read, update, delete: if request.auth != null;
+    }
+
+    match /waitlist/{entryId} {
+      allow create: if true;
+      allow read, update, delete: if request.auth != null;
+    }
+
+    // Everything else stays locked down by default.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

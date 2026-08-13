@@ -1,69 +1,104 @@
-import Image from "next/image";
+import Link from "next/link";
+import { Star, MapPin, Phone, Clock, ArrowRight, Sparkles } from "lucide-react";
+import { GROOMER } from "@/lib/groomer";
+import { GroomerMapLoader } from "@/components/GroomerMapLoader";
 
-export default function Home() {
+export default function HomePage() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="space-y-8">
+      {/* Hero */}
+      <section className="text-center max-w-xl mx-auto space-y-4 pt-4">
+        <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-indigo-300 uppercase tracking-widest bg-indigo-500/15 px-3 py-1 rounded-full border border-indigo-400/30 backdrop-blur-md">
+          <Sparkles className="w-3.5 h-3.5" />
+          {GROOMER.town}, {GROOMER.county}
+        </span>
+        <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-white text-balance">
+          {GROOMER.businessName}
+        </h1>
+        <p className="text-sm text-white/60">{GROOMER.tagline}</p>
+        <div className="flex items-center justify-center gap-1.5 text-sm">
+          <Star className="w-4 h-4 fill-indigo-400 text-indigo-400" />
+          <span className="font-semibold text-white">{GROOMER.rating}</span>
+          <span className="text-white/50">({GROOMER.reviewCount} reviews)</span>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+        <Link
+          href="/book"
+          className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-indigo-500 hover:bg-indigo-400 text-white font-bold text-sm shadow-lg shadow-indigo-500/25 transition-all border border-indigo-400/30"
+        >
+          <span>Book an Appointment</span>
+          <ArrowRight className="w-4 h-4" />
+        </Link>
+      </section>
+
+      {/* Stats row */}
+      <section className="grid grid-cols-3 gap-3">
+        {[
+          { label: "Happy Dogs", value: "1,200+" },
+          { label: "Years Experience", value: "10+" },
+          { label: "Rating", value: `${GROOMER.rating}★` },
+        ].map((stat) => (
+          <div
+            key={stat.label}
+            className="glass-card px-4 py-4 text-center"
           >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
+            <div className="text-xl font-bold text-white">{stat.value}</div>
+            <div className="text-[11px] text-white/50 mt-1">{stat.label}</div>
+          </div>
+        ))}
+      </section>
+
+      {/* Location + map */}
+      <section className="glass-card p-5 space-y-4">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <h2 className="text-base font-bold text-white flex items-center gap-2">
+              <MapPin className="w-4 h-4 text-indigo-300" />
+              Find Us
+            </h2>
+            <p className="text-xs text-white/60 mt-1">
+              {GROOMER.address}, {GROOMER.town}, {GROOMER.county} · {GROOMER.eircode}
+            </p>
+          </div>
           <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            href={`tel:${GROOMER.phone.replace(/\s/g, "")}`}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/10 hover:bg-white/15 text-xs font-semibold text-white border border-white/10 whitespace-nowrap"
           >
-            Documentation
+            <Phone className="w-3.5 h-3.5 text-indigo-300" />
+            Call
           </a>
         </div>
-      </main>
+        <GroomerMapLoader groomer={GROOMER} />
+      </section>
+
+      {/* Opening hours */}
+      <section className="glass-card p-5">
+        <h2 className="text-base font-bold text-white flex items-center gap-2 mb-3">
+          <Clock className="w-4 h-4 text-indigo-300" />
+          Opening Hours
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-1.5 text-xs">
+          {GROOMER.hours.map((h) => (
+            <div key={h.day} className="flex justify-between border-b border-white/5 py-1.5">
+              <span className="text-white/70 font-medium">{h.day}</span>
+              <span className={h.closed ? "text-white/40" : "text-white/90"}>
+                {h.closed ? "Closed" : `${h.open} – ${h.close}`}
+              </span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Pricing notice — the differentiator, surfaced early */}
+      <section className="glass-card p-5 border-indigo-400/20">
+        <p className="text-xs text-white/70 leading-relaxed">
+          <span className="font-semibold text-indigo-300">About our pricing — </span>
+          All prices are a starting guide. A final price is confirmed on the day
+          based on coat condition, matting, and time since last groom.{" "}
+          <Link href="/services" className="text-indigo-300 underline underline-offset-2">
+            See services &amp; pricing
+          </Link>
+        </p>
+      </section>
     </div>
   );
 }
