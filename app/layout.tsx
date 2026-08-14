@@ -32,7 +32,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${inter.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col text-white selection:bg-indigo-500 selection:text-white relative">
+      <body className="min-h-full flex flex-col text-white selection:bg-violet-500 selection:text-white relative">
         <div className="mesh-bg" />
         <div className="relative z-10 flex flex-col min-h-full">
           <TopNav />

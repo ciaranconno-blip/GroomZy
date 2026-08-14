@@ -18,10 +18,10 @@ interface GalleryPhoto {
 // once the groomer starts adding real before/after shots.
 const PLACEHOLDER_PHOTOS: GalleryPhoto[] = [
   { id: "1", tag: "before", size: "large", caption: "Husky, matted coat", gradient: "from-slate-700 to-slate-900" },
-  { id: "2", tag: "after", size: "large", caption: "Husky, de-shed & tidy", gradient: "from-indigo-600 to-purple-800" },
+  { id: "2", tag: "after", size: "large", caption: "Husky, de-shed & tidy", gradient: "from-violet-600 to-purple-800" },
   { id: "3", tag: "before", size: "small", caption: "Shih Tzu, overgrown", gradient: "from-slate-700 to-slate-900" },
-  { id: "4", tag: "after", size: "small", caption: "Shih Tzu, full groom", gradient: "from-indigo-600 to-purple-800" },
-  { id: "5", tag: "after", size: "large", caption: "Golden Retriever, bath & tidy", gradient: "from-indigo-600 to-purple-800" },
+  { id: "4", tag: "after", size: "small", caption: "Shih Tzu, full groom", gradient: "from-violet-600 to-purple-800" },
+  { id: "5", tag: "after", size: "large", caption: "Golden Retriever, bath & tidy", gradient: "from-violet-600 to-purple-800" },
   { id: "6", tag: "before", size: "small", caption: "Cavapoo, matted ears", gradient: "from-slate-700 to-slate-900" },
 ];
 
@@ -70,7 +70,7 @@ export default function GalleryPage() {
             <div className="p-2.5">
               <span
                 className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
-                  photo.tag === "before" ? "bg-white/10 text-white/60" : "bg-indigo-500/20 text-indigo-300"
+                  photo.tag === "before" ? "bg-white/10 text-white/60" : "bg-violet-500/20 text-violet-300"
                 }`}
               >
                 {photo.tag}
@@ -82,7 +82,7 @@ export default function GalleryPage() {
 
         <button
           type="button"
-          className="glass-card border-dashed flex flex-col items-center justify-center gap-2 h-full min-h-[9rem] text-white/40 hover:text-white/70 hover:border-indigo-400/40 transition-colors"
+          className="glass-card border-dashed flex flex-col items-center justify-center gap-2 h-full min-h-[9rem] text-white/40 hover:text-white/70 hover:border-violet-400/40 transition-colors"
         >
           <Plus className="w-6 h-6" />
           <span className="text-[11px] font-medium">Add Photo</span>

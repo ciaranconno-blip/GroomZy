@@ -14,9 +14,9 @@ export default function ServicesPage() {
 
       {/* Site-wide pricing notice */}
       <div className="glass-card p-4 flex items-start gap-3">
-        <Info className="w-4 h-4 text-indigo-300 mt-0.5 flex-shrink-0" />
+        <Info className="w-4 h-4 text-violet-300 mt-0.5 flex-shrink-0" />
         <p className="text-xs text-white/70 leading-relaxed">
-          <span className="font-semibold text-indigo-300">About our pricing — </span>
+          <span className="font-semibold text-violet-300">About our pricing — </span>
           All prices are a starting guide. A final price is confirmed on the day
           based on coat condition, matting, and time since last groom.
         </p>
@@ -34,7 +34,7 @@ export default function ServicesPage() {
                   <Clock className="w-3 h-3" />
                   {s.durationLabel}
                 </div>
-                {s.note && <div className="text-[11px] text-indigo-300 mt-1">{s.note}</div>}
+                {s.note && <div className="text-[11px] text-violet-300 mt-1">{s.note}</div>}
               </div>
               <div className="text-lg font-bold text-white whitespace-nowrap">
                 {s.priceFrom !== null ? `from €${s.priceFrom}` : "—"}

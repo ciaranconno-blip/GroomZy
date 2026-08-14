@@ -203,7 +203,7 @@ export default function BookPage() {
               <div
                 className={`text-xs font-semibold px-3 py-2 rounded-xl border ${
                   path === "direct"
-                    ? "bg-indigo-500/15 border-indigo-400/30 text-indigo-300"
+                    ? "bg-violet-500/15 border-violet-400/30 text-violet-300"
                     : "bg-amber-500/15 border-amber-400/30 text-amber-300"
                 }`}
               >
@@ -224,7 +224,7 @@ export default function BookPage() {
                   onClick={() => setServiceId(s.id)}
                   className={`text-left p-3 rounded-xl border transition-all flex items-center justify-between ${
                     serviceId === s.id
-                      ? "bg-indigo-500/18 border-indigo-400/50"
+                      ? "bg-violet-500/18 border-violet-400/50"
                       : "bg-white/5 border-white/10 hover:bg-white/10"
                   }`}
                 >
@@ -381,7 +381,7 @@ function StepIndicator({ step }: { step: Step }) {
       <div className="max-w-sm mx-auto flex items-center justify-between relative">
         <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-white/10 -translate-y-1/2 z-0" />
         <div
-          className="absolute top-1/2 left-0 h-0.5 bg-indigo-400 -translate-y-1/2 z-0 transition-all duration-300 shadow-[0_0_10px_#818cf8]"
+          className="absolute top-1/2 left-0 h-0.5 bg-violet-400 -translate-y-1/2 z-0 transition-all duration-300 shadow-[0_0_10px_#818cf8]"
           style={{ width: `${((step - 1) / (steps.length - 1)) * 100}%` }}
         />
         {steps.map((s) => (
@@ -389,9 +389,9 @@ function StepIndicator({ step }: { step: Step }) {
             <div
               className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
                 s < step
-                  ? "bg-indigo-500 text-white"
+                  ? "bg-violet-500 text-white"
                   : s === step
-                  ? "bg-white text-[#0c0c14] ring-4 ring-indigo-400/30 scale-105"
+                  ? "bg-white text-[#0c0c14] ring-4 ring-violet-400/30 scale-105"
                   : "bg-white/5 text-white/40 border border-white/10"
               }`}
             >
@@ -435,7 +435,7 @@ function NavFooter({
         type="button"
         onClick={onNext}
         disabled={nextDisabled}
-        className="px-5 py-2.5 rounded-xl bg-indigo-500 hover:bg-indigo-400 disabled:opacity-30 disabled:pointer-events-none text-white text-xs font-bold flex items-center gap-1.5 shadow-lg shadow-indigo-500/25"
+        className="px-5 py-2.5 rounded-xl bg-violet-500 hover:bg-violet-400 disabled:opacity-30 disabled:pointer-events-none text-white text-xs font-bold flex items-center gap-1.5 shadow-lg shadow-violet-500/25"
       >
         {nextLabel} <ChevronRight className="w-4 h-4" />
       </button>
@@ -446,8 +446,8 @@ function NavFooter({
 function DirectConfirmation() {
   return (
     <div className="glass-card p-8 text-center max-w-md mx-auto space-y-3">
-      <div className="w-14 h-14 rounded-full bg-indigo-500/20 border border-indigo-400/40 flex items-center justify-center mx-auto">
-        <CalendarCheck className="w-7 h-7 text-indigo-300" />
+      <div className="w-14 h-14 rounded-full bg-violet-500/20 border border-violet-400/40 flex items-center justify-center mx-auto">
+        <CalendarCheck className="w-7 h-7 text-violet-300" />
       </div>
       <h2 className="text-lg font-bold text-white">Booking Confirmed</h2>
       <p className="text-xs text-white/60">

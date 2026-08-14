@@ -1,13 +1,14 @@
 @import "tailwindcss";
 
-/* Design language ported from the GroomZy reference (Aura Booking):
-   dark glassmorphism, indigo accent, mesh gradient background. */
+/* Design language: dark glassmorphism + mesh gradient background, ported
+   from the Aura reference; accent recolored to violet to match the real
+   GroomZy logo (#7C3AED family) once that design landed. */
 :root {
   --bg-color: #0c0c14;
   --glass-bg: rgba(255, 255, 255, 0.08);
   --glass-bg-hover: rgba(255, 255, 255, 0.12);
   --glass-border: rgba(255, 255, 255, 0.12);
-  --accent: #818cf8;
+  --accent: #a78bfa;
 }
 
 @theme inline {
@@ -31,8 +32,8 @@ body {
   z-index: 0;
   pointer-events: none;
   background:
-    radial-gradient(circle at 20% 30%, #2e1065 0%, transparent 40%),
-    radial-gradient(circle at 80% 70%, #1e1b4b 0%, transparent 40%),
+    radial-gradient(circle at 20% 30%, #57209E 0%, transparent 40%),
+    radial-gradient(circle at 80% 70%, #3F1670 0%, transparent 40%),
     radial-gradient(circle at 50% 50%, #0c0c14 0%, #0c0c14 100%);
 }
 

@@ -226,7 +226,7 @@ function AdminPageInner() {
       <div className="glass-card p-4 flex items-center justify-between gap-3">
         <div className="flex items-center gap-3">
           {calendarConnected ? (
-            <CalendarCheck2 className="w-5 h-5 text-indigo-300 flex-shrink-0" />
+            <CalendarCheck2 className="w-5 h-5 text-violet-300 flex-shrink-0" />
           ) : (
             <CalendarPlus className="w-5 h-5 text-white/40 flex-shrink-0" />
           )}
@@ -251,7 +251,7 @@ function AdminPageInner() {
         ) : (
           <a
             href={user ? `/api/auth/google/connect?uid=${user.uid}` : "#"}
-            className="px-3 py-2 rounded-xl bg-indigo-500 hover:bg-indigo-400 text-white text-xs font-bold flex-shrink-0"
+            className="px-3 py-2 rounded-xl bg-violet-500 hover:bg-violet-400 text-white text-xs font-bold flex-shrink-0"
           >
             Connect
           </a>
@@ -295,7 +295,7 @@ function AdminPageInner() {
                   type="button"
                   onClick={() => toggleDone(a.id, a.status)}
                   className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 border transition-colors ${
-                    a.status === "done" ? "bg-indigo-500 border-indigo-400" : "bg-white/5 border-white/15"
+                    a.status === "done" ? "bg-violet-500 border-violet-400" : "bg-white/5 border-white/15"
                   }`}
                 >
                   {a.status === "done" && <Check className="w-4 h-4 text-white" />}
