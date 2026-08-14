@@ -2,12 +2,26 @@
 
 import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { collection, query, where, orderBy, limit, getDocs, onSnapshot, doc, updateDoc, Timestamp } from "firebase/firestore";
+import {
+  collection,
+  query,
+  where,
+  orderBy,
+  limit,
+  getDocs,
+  getCountFromServer,
+  onSnapshot,
+  doc,
+  updateDoc,
+  Timestamp,
+} from "firebase/firestore";
 import { signOut } from "firebase/auth";
-import { Check, PhoneCall, Bell, LogOut, Loader2, CalendarCheck2, CalendarPlus, X } from "lucide-react";
+import Link from "next/link";
+import { Check, PhoneCall, Bell, LogOut, Loader2, CalendarCheck2, CalendarPlus, X, Settings, BarChart3, TrendingUp } from "lucide-react";
 import { db, auth } from "@/lib/firebase";
 import { useAuth } from "@/lib/useAuth";
 import type { Business } from "@/lib/business";
+import { PLATFORM_OWNER_UID } from "@/lib/platform";
 
 interface BookingDoc {
   id: string;
@@ -71,6 +85,8 @@ function AdminPageInner() {
 
   const [calendarConnected, setCalendarConnected] = useState<boolean | null>(null);
   const [calendarBanner, setCalendarBanner] = useState<string | null>(null);
+
+  const [insights, setInsights] = useState<{ totalBookings: number; totalEnquiries: number } | null>(null);
 
   useEffect(() => {
     const status = searchParams.get("calendar");
@@ -145,6 +161,20 @@ function AdminPageInner() {
         setBusinessLoading(false);
       });
   }, [user, router]);
+
+  useEffect(() => {
+    if (!user) return;
+    // Aggregation counts (not full reads) — cheap even as booking history grows.
+    Promise.all([
+      getCountFromServer(query(collection(db, "bookings"), where("ownerId", "==", user.uid))),
+      getCountFromServer(query(collection(db, "enquiries"), where("ownerId", "==", user.uid))),
+    ]).then(([bookingsCount, enquiriesCount]) => {
+      setInsights({
+        totalBookings: bookingsCount.data().count,
+        totalEnquiries: enquiriesCount.data().count,
+      });
+    });
+  }, [user]);
 
   useEffect(() => {
     if (!user) return;
@@ -256,12 +286,30 @@ function AdminPageInner() {
           <h1 className="text-xl font-bold text-white">{today}</h1>
           <p className="text-xs text-white/50">Today&apos;s brief — everything on before the door opens.</p>
         </div>
-        <button
-          onClick={() => signOut(auth)}
-          className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-white/60 hover:text-white text-xs font-medium flex-shrink-0"
-        >
-          <LogOut className="w-3.5 h-3.5" /> Sign Out
-        </button>
+        <div className="flex items-center gap-2 flex-shrink-0">
+          {user.uid === PLATFORM_OWNER_UID && (
+            <Link
+              href="/dev/analytics"
+              className="p-2 rounded-xl bg-white/5 border border-white/10 text-white/60 hover:text-white"
+              title="Platform analytics"
+            >
+              <BarChart3 className="w-4 h-4" />
+            </Link>
+          )}
+          <Link
+            href="/admin/settings"
+            className="p-2 rounded-xl bg-white/5 border border-white/10 text-white/60 hover:text-white"
+            title="Business settings"
+          >
+            <Settings className="w-4 h-4" />
+          </Link>
+          <button
+            onClick={() => signOut(auth)}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-white/60 hover:text-white text-xs font-medium"
+          >
+            <LogOut className="w-3.5 h-3.5" /> Sign Out
+          </button>
+        </div>
       </div>
 
       {calendarBanner && (
@@ -323,6 +371,22 @@ function AdminPageInner() {
           <div className="text-[11px] text-white/50 mt-1">Enquiries</div>
         </div>
       </div>
+
+      {insights && (
+        <div className="glass-card p-4 flex items-center gap-4">
+          <TrendingUp className="w-5 h-5 text-violet-300 flex-shrink-0" />
+          <div className="flex-1 grid grid-cols-2 gap-3">
+            <div>
+              <div className="text-lg font-bold text-white">{insights.totalBookings}</div>
+              <div className="text-[11px] text-white/50">Bookings all-time</div>
+            </div>
+            <div>
+              <div className="text-lg font-bold text-white">{insights.totalEnquiries}</div>
+              <div className="text-[11px] text-white/50">Enquiries all-time</div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {dataError && (
         <div className="glass-card p-3 text-xs text-red-300 border-red-400/30 bg-red-500/5">{dataError}</div>

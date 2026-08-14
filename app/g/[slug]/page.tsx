@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Star, MapPin, Phone, Clock, ArrowRight, Sparkles } from "lucide-react";
+import { Star, MapPin, Phone, Clock, ArrowRight, Sparkles, AtSign, Globe, MessageSquareText } from "lucide-react";
 import { getBusinessBySlug } from "@/lib/business-lookup";
 import { GroomerMapLoader } from "@/components/GroomerMapLoader";
 
@@ -33,6 +33,44 @@ export default async function BusinessHomePage({ params }: { params: Promise<{ s
           <span>Book an Appointment</span>
           <ArrowRight className="w-4 h-4" />
         </Link>
+
+        {(business.socials?.instagram || business.socials?.facebook || business.socials?.googleReviews) && (
+          <div className="flex items-center justify-center gap-2 pt-1">
+            {business.socials.instagram && (
+              <a
+                href={business.socials.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2.5 rounded-full bg-white/5 border border-white/10 text-white/60 hover:text-white hover:bg-white/10 transition-colors"
+                aria-label="Instagram"
+              >
+                <AtSign className="w-4 h-4" />
+              </a>
+            )}
+            {business.socials.facebook && (
+              <a
+                href={business.socials.facebook}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2.5 rounded-full bg-white/5 border border-white/10 text-white/60 hover:text-white hover:bg-white/10 transition-colors"
+                aria-label="Facebook"
+              >
+                <Globe className="w-4 h-4" />
+              </a>
+            )}
+            {business.socials.googleReviews && (
+              <a
+                href={business.socials.googleReviews}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2.5 rounded-full bg-white/5 border border-white/10 text-white/60 hover:text-white hover:bg-white/10 transition-colors"
+                aria-label="Google Reviews"
+              >
+                <MessageSquareText className="w-4 h-4" />
+              </a>
+            )}
+          </div>
+        )}
       </section>
 
       {/* Rating — only real, business-supplied data, no fabricated stats */}

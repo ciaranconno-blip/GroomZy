@@ -288,6 +288,14 @@ function BusinessProfileStep() {
         createdAt: serverTimestamp(),
       };
       await addDoc(collection(db, "businesses"), business);
+
+      // Best-effort — a missing email API key should never block signup.
+      fetch("/api/notify/new-signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ businessName, slug: effectiveSlug, town, county }),
+      }).catch((err) => console.warn("Signup notification request failed:", err));
+
       router.push("/admin");
     } catch (err) {
       console.error("Business creation failed:", err);
