@@ -6,9 +6,6 @@ import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 
 import { LogIn, Loader2 } from "lucide-react";
 import { auth } from "@/lib/firebase";
 
-// Sign-up removed deliberately — the one groomer account already exists.
-// This is an admin login only; open registration on a live URL would let
-// anyone who finds it create an account with access to customer bookings.
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -97,6 +94,13 @@ export default function LoginPage() {
           Continue with Google
         </button>
       </div>
+
+      <p className="text-center text-xs text-white/40">
+        New groomer?{" "}
+        <a href="/signup" className="text-violet-300 underline underline-offset-2">
+          Set up your business
+        </a>
+      </p>
     </div>
   );
 }

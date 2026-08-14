@@ -2,21 +2,22 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { publicNavItems } from "@/lib/nav";
+import { publicNavItems, marketingNavItems } from "@/lib/nav";
 
-// Fixed bottom tab bar — the primary nav on mobile, per the memory file spec,
-// but only within a business's own public pages. Admin/login/signup/marketing
-// have their own layouts and don't need a generic public tab bar competing
-// for the bottom of the screen.
+// Fixed bottom tab bar — the primary nav on mobile, per the memory file spec.
+// Shown within a business's own public pages, and on the generic marketing
+// pages (home, find-a-groomer). Admin/login/signup have their own dedicated
+// flows and don't need a generic tab bar competing for the bottom of the screen.
 export function BottomNav() {
   const pathname = usePathname();
   const slugMatch = pathname.match(/^\/g\/([^/]+)/);
   const slug = slugMatch?.[1];
+  const isMarketingPage = pathname === "/" || pathname === "/groomers";
 
-  if (!slug) return null;
+  if (!slug && !isMarketingPage) return null;
 
-  const navItems = publicNavItems(slug);
-  const homeHref = `/g/${slug}`;
+  const navItems = slug ? publicNavItems(slug) : marketingNavItems();
+  const homeHref = slug ? `/g/${slug}` : "/";
 
   return (
     <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 pb-[env(safe-area-inset-bottom)] bg-white/5 backdrop-blur-xl border-t border-white/10">

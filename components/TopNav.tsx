@@ -61,6 +61,12 @@ export function TopNav() {
         {!slug && !pathname.startsWith("/admin") && (
           <div className="flex items-center gap-2">
             <Link
+              href="/groomers"
+              className="px-4 py-2 rounded-full text-xs font-semibold text-white/70 hover:text-white hover:bg-white/10 transition-all"
+            >
+              Find a Groomer
+            </Link>
+            <Link
               href="/login"
               className="px-4 py-2 rounded-full text-xs font-semibold text-white/70 hover:text-white hover:bg-white/10 transition-all"
             >

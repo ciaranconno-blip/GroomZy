@@ -19,11 +19,13 @@ export default async function BusinessHomePage({ params }: { params: Promise<{ s
           {business.businessName}
         </h1>
         <p className="text-sm text-white/60">{business.tagline}</p>
-        <div className="flex items-center justify-center gap-1.5 text-sm">
-          <Star className="w-4 h-4 fill-violet-400 text-violet-400" />
-          <span className="font-semibold text-white">{business.rating}</span>
-          <span className="text-white/50">({business.reviewCount} reviews)</span>
-        </div>
+        {business.reviewCount > 0 && (
+          <div className="flex items-center justify-center gap-1.5 text-sm">
+            <Star className="w-4 h-4 fill-violet-400 text-violet-400" />
+            <span className="font-semibold text-white">{business.rating}</span>
+            <span className="text-white/50">({business.reviewCount} reviews)</span>
+          </div>
+        )}
         <Link
           href={`/g/${slug}/book`}
           className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-violet-500 hover:bg-violet-400 text-white font-bold text-sm shadow-lg shadow-violet-500/25 transition-all border border-violet-400/30"
@@ -33,19 +35,15 @@ export default async function BusinessHomePage({ params }: { params: Promise<{ s
         </Link>
       </section>
 
-      {/* Stats row */}
-      <section className="grid grid-cols-3 gap-3">
-        {[
-          { label: "Happy Dogs", value: "1,200+" },
-          { label: "Years Experience", value: "10+" },
-          { label: "Rating", value: `${business.rating}★` },
-        ].map((stat) => (
-          <div key={stat.label} className="glass-card px-4 py-4 text-center">
-            <div className="text-xl font-bold text-white">{stat.value}</div>
-            <div className="text-[11px] text-white/50 mt-1">{stat.label}</div>
+      {/* Rating — only real, business-supplied data, no fabricated stats */}
+      {business.reviewCount > 0 && (
+        <section className="grid grid-cols-1 gap-3">
+          <div className="glass-card px-4 py-4 text-center">
+            <div className="text-xl font-bold text-white">{business.rating}★</div>
+            <div className="text-[11px] text-white/50 mt-1">Rating</div>
           </div>
-        ))}
-      </section>
+        </section>
+      )}
 
       {/* Location + map */}
       <section className="glass-card p-5 space-y-4">
