@@ -20,13 +20,9 @@ export const metadata: Metadata = {
     statusBarStyle: "black-translucent",
     title: "GroomZy",
   },
-  icons: {
-    icon: [
-      { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
-      { url: "/icons/icon-512.png", sizes: "512x512", type: "image/png" },
-    ],
-    apple: "/icons/apple-touch-icon.png",
-  },
+  // Favicon + apple touch icon come from app/icon.png and app/apple-icon.png
+  // via Next's file convention — manifest.json still carries the full PWA
+  // icon set (192/512/maskable) for install prompts and Android/TWA.
 };
 
 export const viewport: Viewport = {

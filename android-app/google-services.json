@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "782151265965",
+    "project_id": "groomzy-booking-app",
+    "storage_bucket": "groomzy-booking-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:782151265965:android:bb1cd6406a19630faa2024",
+        "android_client_info": {
+          "package_name": "ie.groomzy.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "782151265965-lbrlgn3vnlhsu59aoeo9cnlv0eb73t2n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB8ESOLcVXwf4q8N53k6c_WndMks2T_nS8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "782151265965-lbrlgn3vnlhsu59aoeo9cnlv0eb73t2n.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

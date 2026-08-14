@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { NAV_ITEMS } from "@/lib/nav";
 
@@ -13,14 +14,17 @@ export function TopNav() {
     <header className="hidden md:block sticky top-0 z-40 bg-white/5 backdrop-blur-xl border-b border-white/10 shadow-xl">
       <div className="max-w-6xl mx-auto px-6 flex items-center justify-between h-20">
         <Link href="/" className="flex items-center gap-3 group">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-indigo-400 p-0.5 shadow-lg shadow-indigo-500/20 group-hover:scale-105 transition-transform">
-            <div className="w-full h-full bg-[#0c0c14] rounded-[10px] flex items-center justify-center">
-              <span className="font-bold text-lg text-indigo-400">G</span>
-            </div>
-          </div>
+          <Image
+            src="/icons/icon-192.png"
+            alt="GroomZy"
+            width={40}
+            height={40}
+            className="rounded-xl shadow-lg shadow-[#7C3AED]/30 group-hover:scale-105 transition-transform"
+            priority
+          />
           <div>
             <span className="text-xl font-semibold tracking-tight text-white block">
-              Groom<span className="text-indigo-400">Zy</span>
+              Groom<span className="text-[#A374F7]">Zy</span>
             </span>
             <span className="text-[10px] text-white/40 tracking-wider font-medium block -mt-1">
               Dog Grooming, Booked Properly
