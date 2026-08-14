@@ -2,11 +2,12 @@
 
 import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { collection, query, where, orderBy, onSnapshot, doc, updateDoc, Timestamp } from "firebase/firestore";
+import { collection, query, where, orderBy, limit, getDocs, onSnapshot, doc, updateDoc, Timestamp } from "firebase/firestore";
 import { signOut } from "firebase/auth";
 import { Check, PhoneCall, Bell, LogOut, Loader2, CalendarCheck2, CalendarPlus, X } from "lucide-react";
 import { db, auth } from "@/lib/firebase";
 import { useAuth } from "@/lib/useAuth";
+import type { Business } from "@/lib/business";
 
 interface BookingDoc {
   id: string;
@@ -59,6 +60,9 @@ function AdminPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  const [business, setBusiness] = useState<Business | null>(null);
+  const [businessLoading, setBusinessLoading] = useState(true);
+
   const [appointments, setAppointments] = useState<BookingDoc[]>([]);
   const [enquiries, setEnquiries] = useState<EnquiryDoc[]>([]);
   const [waitlist, setWaitlist] = useState<WaitlistDoc[]>([]);
@@ -103,9 +107,44 @@ function AdminPageInner() {
     setCalendarBanner("Google Calendar disconnected.");
   }
 
+  async function handleConnectCalendar() {
+    if (!user) return;
+    const idToken = await user.getIdToken();
+    const res = await fetch("/api/auth/google/connect", {
+      headers: { Authorization: `Bearer ${idToken}` },
+    });
+    if (!res.ok) {
+      setCalendarBanner("Couldn't start the Google Calendar connection — try again.");
+      return;
+    }
+    const { url } = await res.json();
+    window.location.href = url;
+  }
+
   useEffect(() => {
     if (!authLoading && !user) router.push("/login");
   }, [authLoading, user, router]);
+
+  useEffect(() => {
+    if (!user) return;
+    const businessQ = query(collection(db, "businesses"), where("ownerId", "==", user.uid), limit(1));
+    getDocs(businessQ)
+      .then((snap) => {
+        if (snap.empty) {
+          // No business doc for this uid — most likely an account that finished
+          // step 1 of signup (auth) but abandoned step 2 (business profile).
+          router.push("/signup?step=2");
+          return;
+        }
+        const d = snap.docs[0];
+        setBusiness({ id: d.id, ...d.data() } as Business);
+        setBusinessLoading(false);
+      })
+      .catch((err) => {
+        console.error("Business lookup failed:", err);
+        setBusinessLoading(false);
+      });
+  }, [user, router]);
 
   useEffect(() => {
     if (!user) return;
@@ -199,7 +238,7 @@ function AdminPageInner() {
     });
   }
 
-  if (authLoading || !user) {
+  if (authLoading || !user || businessLoading || !business) {
     return (
       <div className="flex items-center justify-center py-20">
         <Loader2 className="w-6 h-6 text-white/40 animate-spin" />
@@ -213,6 +252,7 @@ function AdminPageInner() {
     <div className="space-y-6">
       <div className="flex items-start justify-between gap-3">
         <div>
+          <p className="text-xs font-semibold text-violet-300">{business.businessName}</p>
           <h1 className="text-xl font-bold text-white">{today}</h1>
           <p className="text-xs text-white/50">Today&apos;s brief — everything on before the door opens.</p>
         </div>
@@ -259,12 +299,12 @@ function AdminPageInner() {
             Disconnect
           </button>
         ) : (
-          <a
-            href={user ? `/api/auth/google/connect?uid=${user.uid}` : "#"}
+          <button
+            onClick={handleConnectCalendar}
             className="px-3 py-2 rounded-xl bg-violet-500 hover:bg-violet-400 text-white text-xs font-bold flex-shrink-0"
           >
             Connect
-          </a>
+          </button>
         )}
       </div>
 

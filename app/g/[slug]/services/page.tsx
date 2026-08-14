@@ -2,7 +2,8 @@ import Link from "next/link";
 import { Info, Clock, ArrowRight, AlertTriangle } from "lucide-react";
 import { SERVICES, BREEDS } from "@/lib/breeds";
 
-export default function ServicesPage() {
+export default async function ServicesPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
   const directBreeds = BREEDS.filter((b) => b.defaultPath === "direct");
   const enquiryBreeds = BREEDS.filter((b) => b.defaultPath === "enquiry");
 
@@ -92,7 +93,7 @@ export default function ServicesPage() {
           </span>
         </div>
         <Link
-          href="/book"
+          href={`/g/${slug}/book`}
           className="inline-flex items-center gap-2 text-xs font-semibold text-amber-300 hover:text-amber-200 pl-8"
         >
           Send an enquiry <ArrowRight className="w-3.5 h-3.5" />

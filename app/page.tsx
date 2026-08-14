@@ -1,101 +1,72 @@
 import Link from "next/link";
-import { Star, MapPin, Phone, Clock, ArrowRight, Sparkles } from "lucide-react";
-import { GROOMER } from "@/lib/groomer";
-import { GroomerMapLoader } from "@/components/GroomerMapLoader";
+import { ArrowRight, CalendarCheck2, Scissors, ShieldCheck, Sparkles } from "lucide-react";
 
-export default function HomePage() {
+const FEATURES = [
+  {
+    icon: CalendarCheck2,
+    title: "Two-path booking",
+    body: "Simple coats book an instant slot. Double-coated and large breeds route to a quick consultation first — no more guessing a groom time and running the whole day late.",
+  },
+  {
+    icon: Scissors,
+    title: "Built for groomers, not spreadsheets",
+    body: "A daily brief, a live waitlist, and Google Calendar sync — everything a one-person or small grooming business actually needs, nothing it doesn't.",
+  },
+  {
+    icon: ShieldCheck,
+    title: "Your own page, your own data",
+    body: "Every business gets its own booking page and fully isolated data. No shared logins, no mixed-up calendars.",
+  },
+];
+
+export default function MarketingHomePage() {
   return (
-    <div className="space-y-8">
-      {/* Hero */}
-      <section className="text-center max-w-xl mx-auto space-y-4 pt-4">
+    <div className="space-y-10">
+      <section className="text-center max-w-xl mx-auto space-y-5 pt-6">
         <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-violet-300 uppercase tracking-widest bg-violet-500/15 px-3 py-1 rounded-full border border-violet-400/30 backdrop-blur-md">
           <Sparkles className="w-3.5 h-3.5" />
-          {GROOMER.town}, {GROOMER.county}
+          Dog Grooming, Booked Properly
         </span>
         <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-white text-balance">
-          {GROOMER.businessName}
+          Booking software built for dog groomers
         </h1>
-        <p className="text-sm text-white/60">{GROOMER.tagline}</p>
-        <div className="flex items-center justify-center gap-1.5 text-sm">
-          <Star className="w-4 h-4 fill-violet-400 text-violet-400" />
-          <span className="font-semibold text-white">{GROOMER.rating}</span>
-          <span className="text-white/50">({GROOMER.reviewCount} reviews)</span>
+        <p className="text-sm text-white/60">
+          Give clients a real booking page — instant slots for simple coats,
+          consultations for the breeds that actually need one — and get a
+          daily brief that keeps your whole week straight.
+        </p>
+        <div className="flex flex-wrap items-center justify-center gap-3">
+          <Link
+            href="/signup"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-violet-500 hover:bg-violet-400 text-white font-bold text-sm shadow-lg shadow-violet-500/25 transition-all border border-violet-400/30"
+          >
+            <span>Get Started</span>
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+          <Link
+            href="/login"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white/5 hover:bg-white/10 text-white/80 font-semibold text-sm border border-white/10 transition-all"
+          >
+            Sign In
+          </Link>
         </div>
-        <Link
-          href="/book"
-          className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-violet-500 hover:bg-violet-400 text-white font-bold text-sm shadow-lg shadow-violet-500/25 transition-all border border-violet-400/30"
-        >
-          <span>Book an Appointment</span>
-          <ArrowRight className="w-4 h-4" />
-        </Link>
       </section>
 
-      {/* Stats row */}
-      <section className="grid grid-cols-3 gap-3">
-        {[
-          { label: "Happy Dogs", value: "1,200+" },
-          { label: "Years Experience", value: "10+" },
-          { label: "Rating", value: `${GROOMER.rating}★` },
-        ].map((stat) => (
-          <div
-            key={stat.label}
-            className="glass-card px-4 py-4 text-center"
-          >
-            <div className="text-xl font-bold text-white">{stat.value}</div>
-            <div className="text-[11px] text-white/50 mt-1">{stat.label}</div>
+      <section className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        {FEATURES.map((f) => (
+          <div key={f.title} className="glass-card p-5 space-y-2">
+            <f.icon className="w-5 h-5 text-violet-300" />
+            <h2 className="text-sm font-bold text-white">{f.title}</h2>
+            <p className="text-xs text-white/60 leading-relaxed">{f.body}</p>
           </div>
         ))}
       </section>
 
-      {/* Location + map */}
-      <section className="glass-card p-5 space-y-4">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <h2 className="text-base font-bold text-white flex items-center gap-2">
-              <MapPin className="w-4 h-4 text-violet-300" />
-              Find Us
-            </h2>
-            <p className="text-xs text-white/60 mt-1">
-              {GROOMER.address}, {GROOMER.town}, {GROOMER.county} · {GROOMER.eircode}
-            </p>
-          </div>
-          <a
-            href={`tel:${GROOMER.phone.replace(/\s/g, "")}`}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/10 hover:bg-white/15 text-xs font-semibold text-white border border-white/10 whitespace-nowrap"
-          >
-            <Phone className="w-3.5 h-3.5 text-violet-300" />
-            Call
-          </a>
-        </div>
-        <GroomerMapLoader groomer={GROOMER} />
-      </section>
-
-      {/* Opening hours */}
-      <section className="glass-card p-5">
-        <h2 className="text-base font-bold text-white flex items-center gap-2 mb-3">
-          <Clock className="w-4 h-4 text-violet-300" />
-          Opening Hours
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-1.5 text-xs">
-          {GROOMER.hours.map((h) => (
-            <div key={h.day} className="flex justify-between border-b border-white/5 py-1.5">
-              <span className="text-white/70 font-medium">{h.day}</span>
-              <span className={h.closed ? "text-white/40" : "text-white/90"}>
-                {h.closed ? "Closed" : `${h.open} – ${h.close}`}
-              </span>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Pricing notice — the differentiator, surfaced early */}
-      <section className="glass-card p-5 border-violet-400/20">
-        <p className="text-xs text-white/70 leading-relaxed">
-          <span className="font-semibold text-violet-300">About our pricing — </span>
-          All prices are a starting guide. A final price is confirmed on the day
-          based on coat condition, matting, and time since last groom.{" "}
-          <Link href="/services" className="text-violet-300 underline underline-offset-2">
-            See services &amp; pricing
+      <section className="glass-card p-5 text-center space-y-2">
+        <p className="text-xs text-white/60">
+          Looking for Fairy Dog Mother?{" "}
+          <Link href="/g/fairy-dog-mother" className="text-violet-300 underline underline-offset-2">
+            Go to their booking page →
           </Link>
         </p>
       </section>

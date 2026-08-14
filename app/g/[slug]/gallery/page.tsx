@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Plus, ImageIcon } from "lucide-react";
+import { useBusiness } from "@/lib/BusinessContext";
 
 type Tag = "before" | "after";
 type BreedSize = "small" | "large";
@@ -34,6 +35,7 @@ const FILTERS = [
 ] as const;
 
 export default function GalleryPage() {
+  const business = useBusiness();
   const [activeFilter, setActiveFilter] = useState<(typeof FILTERS)[number]["id"]>("all");
 
   const filtered = PLACEHOLDER_PHOTOS.filter((p) => {
@@ -46,7 +48,7 @@ export default function GalleryPage() {
     <div className="space-y-6">
       <div className="text-center max-w-xl mx-auto space-y-2 pt-2">
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">Gallery</h1>
-        <p className="text-xs text-white/50">Real transformations from real Ballinasloe dogs.</p>
+        <p className="text-xs text-white/50">Real transformations from real {business.town} dogs.</p>
       </div>
 
       <div className="flex items-center gap-1.5 overflow-x-auto pb-1">

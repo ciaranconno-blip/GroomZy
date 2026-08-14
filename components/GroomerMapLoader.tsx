@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { GroomerProfile } from "@/lib/groomer";
+import { Business } from "@/lib/business";
 
 // Leaflet touches `window` at module load — must never render during SSR.
 const GroomerMap = dynamic(
@@ -16,6 +16,6 @@ const GroomerMap = dynamic(
   }
 );
 
-export function GroomerMapLoader({ groomer }: { groomer: GroomerProfile }) {
+export function GroomerMapLoader({ groomer }: { groomer: Business }) {
   return <GroomerMap groomer={groomer} />;
 }

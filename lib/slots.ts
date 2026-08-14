@@ -1,4 +1,4 @@
-import { GroomerProfile } from "@/lib/groomer";
+import { Business } from "@/lib/business";
 
 export interface DaySlots {
   dateISO: string;
@@ -14,7 +14,7 @@ const DAY_ABBR = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const BUFFER_MIN = 10;
 const WINDOW_DAYS = 14; // showing 2 weeks at a time in the UI; window itself is 8 weeks server-side later
 
-export function generateSlots(groomer: GroomerProfile, durationMin: number): DaySlots[] {
+export function generateSlots(groomer: Business, durationMin: number): DaySlots[] {
   const days: DaySlots[] = [];
   const today = new Date();
 

@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { GroomerProfile } from "@/lib/groomer";
+import { Business } from "@/lib/business";
 
 // react-leaflet's default marker icon resolves relative to the page, not the
 // package — the classic broken-icon bug. Point it at unpkg's copies instead
@@ -19,7 +19,7 @@ const markerIcon = new L.Icon({
   shadowSize: [41, 41],
 });
 
-export function GroomerMap({ groomer }: { groomer: GroomerProfile }) {
+export function GroomerMap({ groomer }: { groomer: Business }) {
   useEffect(() => {
     // Leaflet reads container size on mount; if it mounted while hidden
     // (e.g. behind a step in the booking wizard) tiles can render blank

@@ -2,18 +2,27 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { NAV_ITEMS } from "@/lib/nav";
+import { publicNavItems } from "@/lib/nav";
 
-// Fixed bottom tab bar — the primary nav on mobile, per the memory file spec.
-// Hidden on desktop in favour of TopNav's pill navigation.
+// Fixed bottom tab bar — the primary nav on mobile, per the memory file spec,
+// but only within a business's own public pages. Admin/login/signup/marketing
+// have their own layouts and don't need a generic public tab bar competing
+// for the bottom of the screen.
 export function BottomNav() {
   const pathname = usePathname();
+  const slugMatch = pathname.match(/^\/g\/([^/]+)/);
+  const slug = slugMatch?.[1];
+
+  if (!slug) return null;
+
+  const navItems = publicNavItems(slug);
+  const homeHref = `/g/${slug}`;
 
   return (
     <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 pb-[env(safe-area-inset-bottom)] bg-white/5 backdrop-blur-xl border-t border-white/10">
       <div className="flex items-stretch justify-around">
-        {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
-          const isActive = href === "/" ? pathname === "/" : pathname.startsWith(href);
+        {navItems.map(({ href, label, icon: Icon }) => {
+          const isActive = href === homeHref ? pathname === homeHref : pathname.startsWith(href);
           return (
             <Link
               key={href}

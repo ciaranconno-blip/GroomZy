@@ -12,7 +12,7 @@ import {
   routeBreed,
   BookingPath,
 } from "@/lib/breeds";
-import { GROOMER } from "@/lib/groomer";
+import { useBusiness } from "@/lib/BusinessContext";
 import { generateSlots } from "@/lib/slots";
 import { db } from "@/lib/firebase";
 
@@ -34,6 +34,7 @@ const STEP_LABELS: Record<Step, string> = {
 };
 
 export default function BookPage() {
+  const business = useBusiness();
   const [step, setStep] = useState<Step>(1);
 
   // Step 1 state
@@ -64,7 +65,7 @@ export default function BookPage() {
   const needsUnsurePrompt = breedId === OTHER_MIXED_BREED && !unsureAnswer;
 
   const durationMin = breed?.baseDurationMin ?? 60;
-  const slotDays = useMemo(() => generateSlots(GROOMER, durationMin), [durationMin]);
+  const slotDays = useMemo(() => generateSlots(business, durationMin), [business, durationMin]);
 
   const canAdvanceStep1 = Boolean(breedId) && !needsUnsurePrompt;
   const canAdvanceStep2 = path === "enquiry" || (Boolean(selectedDate) && Boolean(selectedTime));
@@ -76,8 +77,8 @@ export default function BookPage() {
 
     const service = SERVICES.find((s) => s.id === serviceId);
     const basePayload = {
-      businessId: GROOMER.businessId,
-      ownerId: GROOMER.groomerId,
+      businessId: business.id,
+      ownerId: business.ownerId,
       breedId: breed.breedId,
       breedName: breed.displayName,
       coatType: breed.coatType,
@@ -104,7 +105,7 @@ export default function BookPage() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            groomerId: GROOMER.groomerId,
+            groomerId: business.ownerId,
             dogName,
             breedName: breed.displayName,
             serviceName: service?.name,
@@ -132,7 +133,7 @@ export default function BookPage() {
   }
 
   if (submitted) {
-    return path === "direct" ? <DirectConfirmation /> : <EnquirySent />;
+    return path === "direct" ? <DirectConfirmation /> : <EnquirySent businessName={business.businessName} />;
   }
 
   return (
@@ -296,7 +297,7 @@ export default function BookPage() {
         <div className="space-y-6">
           <Header title="Tell Us About Your Dog" />
           <div className="glass-card p-4 text-xs text-white/70 leading-relaxed">
-            This breed requires a consultation before booking. {GROOMER.businessName} will
+            This breed requires a consultation before booking. {business.businessName} will
             contact you to confirm timing and pricing — no slot is held until then.
           </div>
           <NavFooter onBack={() => setStep(1)} onNext={() => setStep(3)} nextDisabled={false} />
@@ -459,7 +460,7 @@ function DirectConfirmation() {
   );
 }
 
-function EnquirySent() {
+function EnquirySent({ businessName }: { businessName: string }) {
   return (
     <div className="glass-card p-8 text-center max-w-md mx-auto space-y-3">
       <div className="w-14 h-14 rounded-full bg-amber-500/20 border border-amber-400/40 flex items-center justify-center mx-auto">
@@ -467,7 +468,7 @@ function EnquirySent() {
       </div>
       <h2 className="text-lg font-bold text-white">Enquiry Sent</h2>
       <p className="text-xs text-white/60">
-        {GROOMER.businessName} will call you to confirm timing and pricing —
+        {businessName} will call you to confirm timing and pricing —
         no slot is booked yet.
       </p>
     </div>

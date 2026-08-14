@@ -1,5 +1,6 @@
 import { getApps, initializeApp, applicationDefault, cert, App } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
+import { getAuth } from "firebase-admin/auth";
 
 // Server-only — never import this from a "use client" file.
 //
@@ -26,3 +27,4 @@ function getAdminApp(): App {
 }
 
 export const adminDb = getFirestore(getAdminApp());
+export const adminAuth = getAuth(getAdminApp());
