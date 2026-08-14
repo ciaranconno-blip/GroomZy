@@ -1,8 +1,9 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { TopNav } from "@/components/TopNav";
 import { BottomNav } from "@/components/BottomNav";
+import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -13,6 +14,23 @@ export const metadata: Metadata = {
   title: "GroomZy — Dog Grooming, Booked Properly",
   description:
     "Book with your local dog groomer in Ireland. Fixed slots for straightforward coats, a real conversation for the double-coated ones.",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "GroomZy",
+  },
+  icons: {
+    icon: [
+      { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icons/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: "/icons/apple-touch-icon.png",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0c0c14",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -27,6 +45,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           </main>
           <BottomNav />
         </div>
+        <ServiceWorkerRegister />
       </body>
     </html>
   );
