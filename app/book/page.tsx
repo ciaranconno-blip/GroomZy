@@ -76,6 +76,8 @@ export default function BookPage() {
 
     const service = SERVICES.find((s) => s.id === serviceId);
     const basePayload = {
+      businessId: GROOMER.businessId,
+      ownerId: GROOMER.groomerId,
       breedId: breed.breedId,
       breedName: breed.displayName,
       coatType: breed.coatType,

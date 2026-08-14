@@ -7,6 +7,7 @@
 
 export interface GroomerProfile {
   groomerId: string; // Firebase Auth uid — links public bookings to this groomer's calendar/admin
+  businessId: string; // Firestore businesses/{id} doc — TEMPORARY stopgap until Phase 4 deletes this file entirely
   businessName: string;
   tagline: string;
   address: string;
@@ -24,6 +25,7 @@ export interface GroomerProfile {
 
 export const GROOMER: GroomerProfile = {
   groomerId: "urJLvy0SAST9Th5CMVOA6HII3n62",
+  businessId: "zaT6lxz5fRkqArqYoyl5",
   businessName: "Fairy Dog Mother",
   tagline: "Gentle, unhurried grooming — Ballinasloe & surrounds",
   address: "Main Street",

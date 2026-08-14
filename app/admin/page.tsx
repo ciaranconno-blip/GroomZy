@@ -111,13 +111,23 @@ function AdminPageInner() {
     if (!user) return;
 
     const today = todayISO();
+    // ownerId filter is required, not optional — firestore.rules checks
+    // resource.data.ownerId, and Firestore can only allow a list/onSnapshot
+    // query if the query itself proves every possible result satisfies that
+    // rule. A query without this where() gets a blanket permission-denied,
+    // not a silently-filtered result set.
     const bookingsQ = query(
       collection(db, "bookings"),
+      where("ownerId", "==", user.uid),
       where("date", "==", today),
       orderBy("time", "asc")
     );
-    const enquiriesQ = query(collection(db, "enquiries"), orderBy("createdAt", "desc"));
-    const waitlistQ = query(collection(db, "waitlist"));
+    const enquiriesQ = query(
+      collection(db, "enquiries"),
+      where("ownerId", "==", user.uid),
+      orderBy("createdAt", "desc")
+    );
+    const waitlistQ = query(collection(db, "waitlist"), where("ownerId", "==", user.uid));
 
     const unsub1 = onSnapshot(bookingsQ, (snap) => {
       setAppointments(
@@ -141,7 +151,7 @@ function AdminPageInner() {
       setDataError(null);
     }, (err) => {
       console.error("Bookings listener failed:", err);
-      setDataError("Couldn't load today's appointments — check the Firestore index has finished building.");
+      setDataError("Couldn't load today's appointments — a Firestore index may still be building, or check permissions.");
       setDataLoading(false);
     });
 
