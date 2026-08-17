@@ -8,8 +8,9 @@ import {
   getRedirectResult,
   GoogleAuthProvider,
 } from "firebase/auth";
-import { LogIn, Loader2 } from "lucide-react";
+import { LogIn, Loader2, Mail, CheckCircle2 } from "lucide-react";
 import { auth } from "@/lib/firebase";
+import { sendMagicLink, completeMagicLinkSignIn } from "@/lib/magicLink";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -19,17 +20,31 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [checkingRedirect, setCheckingRedirect] = useState(true);
 
+  const [magicLinkLoading, setMagicLinkLoading] = useState(false);
+  const [magicLinkSent, setMagicLinkSent] = useState(false);
+
   // Popup-based Google sign-in gets blocked by a lot of real browsers
   // (Safari ITP, popup blockers, mobile in-app browsers) — redirect is the
   // reliable path, so this picks the result back up after Google sends the
-  // user back here.
+  // user back here. Also checks for a magic-link return in the same pass,
+  // since both land back on this page.
   useEffect(() => {
-    getRedirectResult(auth)
-      .then((result) => {
-        if (result) router.push("/admin");
-      })
-      .catch((err) => setError(readableAuthError(err)))
-      .finally(() => setCheckingRedirect(false));
+    async function checkReturns() {
+      try {
+        const viaMagicLink = await completeMagicLinkSignIn();
+        if (viaMagicLink) {
+          router.push("/admin");
+          return;
+        }
+        const redirectResult = await getRedirectResult(auth);
+        if (redirectResult) router.push("/admin");
+      } catch (err) {
+        setError(readableAuthError(err));
+      } finally {
+        setCheckingRedirect(false);
+      }
+    }
+    checkReturns();
   }, [router]);
 
   async function handleSubmit(e: FormEvent) {
@@ -49,6 +64,23 @@ export default function LoginPage() {
   async function handleGoogleSignIn() {
     setError(null);
     await signInWithRedirect(auth, new GoogleAuthProvider());
+  }
+
+  async function handleMagicLink() {
+    if (!email) {
+      setError("Enter your email above first.");
+      return;
+    }
+    setMagicLinkLoading(true);
+    setError(null);
+    try {
+      await sendMagicLink(email, `${window.location.origin}/login`);
+      setMagicLinkSent(true);
+    } catch (err) {
+      setError(readableAuthError(err));
+    } finally {
+      setMagicLinkLoading(false);
+    }
   }
 
   return (
@@ -90,6 +122,23 @@ export default function LoginPage() {
           </button>
         </form>
 
+        {magicLinkSent ? (
+          <div className="flex items-center gap-2 text-xs text-violet-300 bg-violet-500/10 border border-violet-400/30 rounded-xl px-3 py-2.5">
+            <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
+            <span>Check your email — we sent a sign-in link to {email}.</span>
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={handleMagicLink}
+            disabled={magicLinkLoading}
+            className="w-full flex items-center justify-center gap-1.5 text-xs text-white/50 hover:text-white/80 disabled:opacity-50"
+          >
+            {magicLinkLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Mail className="w-3.5 h-3.5" />}
+            Don&apos;t want to use a password? Email me a sign-in link
+          </button>
+        )}
+
         <div className="flex items-center gap-3">
           <div className="h-px bg-white/10 flex-1" />
           <span className="text-[10px] text-white/40">OR</span>
@@ -121,5 +170,6 @@ function readableAuthError(err: unknown): string {
   const code = (err as { code?: string })?.code ?? "";
   if (code.includes("wrong-password") || code.includes("invalid-credential")) return "Incorrect email or password.";
   if (code.includes("user-not-found")) return "No account with that email.";
+  if (code.includes("invalid-email")) return "That doesn't look like a valid email address.";
   return "Something went wrong — please try again.";
 }

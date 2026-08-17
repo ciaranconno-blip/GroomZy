@@ -11,9 +11,10 @@ import {
   type User,
 } from "firebase/auth";
 import { collection, query, where, limit, getDocs, addDoc, serverTimestamp } from "firebase/firestore";
-import { Loader2, MapPin, CheckCircle2, XCircle } from "lucide-react";
+import { Loader2, MapPin, CheckCircle2, XCircle, Mail } from "lucide-react";
 import { auth, db } from "@/lib/firebase";
 import { DEFAULT_HOURS, slugify, type Business } from "@/lib/business";
+import { sendMagicLink, completeMagicLinkSignIn } from "@/lib/magicLink";
 
 export default function SignupPage() {
   return (
@@ -77,9 +78,15 @@ function AccountStep({ hasStepParam }: { hasStepParam: boolean }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Surfaces an error from a signInWithRedirect that just returned here —
-  // on success, onAuthStateChanged in the parent already swaps to step 2.
+  const [magicLinkLoading, setMagicLinkLoading] = useState(false);
+  const [magicLinkSent, setMagicLinkSent] = useState(false);
+
+  // Surfaces an error from a signInWithRedirect or magic-link that just
+  // returned here — on success, onAuthStateChanged in the parent already
+  // swaps to step 2 (a magic link creates the account automatically if the
+  // email is new, same as an existing user signing back in).
   useEffect(() => {
+    completeMagicLinkSignIn().catch(() => {});
     getRedirectResult(auth).catch((err) => setError(readableAuthError(err)));
   }, []);
 
@@ -101,6 +108,23 @@ function AccountStep({ hasStepParam }: { hasStepParam: boolean }) {
     // Popup-based sign-in gets blocked by a lot of real browsers (Safari
     // ITP, popup blockers, mobile in-app browsers) — redirect is reliable.
     await signInWithRedirect(auth, new GoogleAuthProvider());
+  }
+
+  async function handleMagicLink() {
+    if (!email) {
+      setError("Enter your email above first.");
+      return;
+    }
+    setMagicLinkLoading(true);
+    setError(null);
+    try {
+      await sendMagicLink(email, `${window.location.origin}/signup`);
+      setMagicLinkSent(true);
+    } catch (err) {
+      setError(readableAuthError(err));
+    } finally {
+      setMagicLinkLoading(false);
+    }
   }
 
   return (
@@ -147,6 +171,23 @@ function AccountStep({ hasStepParam }: { hasStepParam: boolean }) {
             Create Account
           </button>
         </form>
+
+        {magicLinkSent ? (
+          <div className="flex items-center gap-2 text-xs text-violet-300 bg-violet-500/10 border border-violet-400/30 rounded-xl px-3 py-2.5">
+            <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
+            <span>Check your email — we sent a sign-in link to {email}.</span>
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={handleMagicLink}
+            disabled={magicLinkLoading}
+            className="w-full flex items-center justify-center gap-1.5 text-xs text-white/50 hover:text-white/80 disabled:opacity-50"
+          >
+            {magicLinkLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Mail className="w-3.5 h-3.5" />}
+            Don&apos;t want to set a password? Email me a sign-in link
+          </button>
+        )}
 
         <div className="flex items-center gap-3">
           <div className="h-px bg-white/10 flex-1" />
