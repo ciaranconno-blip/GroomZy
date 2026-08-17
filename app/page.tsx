@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight, CalendarCheck2, Scissors, ShieldCheck, Sparkles, Check } from "lucide-react";
 
 const PRICING_TIERS = [
@@ -73,6 +74,33 @@ export default function MarketingHomePage() {
           >
             Sign In
           </Link>
+        </div>
+      </section>
+
+      <section className="text-center space-y-5">
+        <div className="max-w-xl mx-auto space-y-1.5">
+          <h2 className="text-xl font-bold text-white">Your day, at a glance</h2>
+          <p className="text-xs text-white/50">
+            Every booking laid out clearly — on your laptop and in your pocket.
+          </p>
+        </div>
+        <div className="hidden md:flex justify-center">
+          <Image
+            src="/marketing/calendar-web.png"
+            alt="GroomZy calendar — web day view showing appointments across groomers"
+            width={1600}
+            height={869}
+            className="w-full max-w-3xl rounded-2xl shadow-2xl shadow-violet-950/50 border border-white/10"
+          />
+        </div>
+        <div className="flex md:hidden justify-center">
+          <Image
+            src="/marketing/calendar-phone.png"
+            alt="GroomZy calendar — mobile day view"
+            width={640}
+            height={1205}
+            className="w-full max-w-[280px] rounded-[2rem] shadow-2xl shadow-violet-950/50"
+          />
         </div>
       </section>
 
