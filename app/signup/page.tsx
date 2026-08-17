@@ -4,7 +4,8 @@ import { Suspense, useEffect, useMemo, useState, type FormEvent } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   createUserWithEmailAndPassword,
-  signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
   GoogleAuthProvider,
   onAuthStateChanged,
   type User,
@@ -76,6 +77,12 @@ function AccountStep({ hasStepParam }: { hasStepParam: boolean }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Surfaces an error from a signInWithRedirect that just returned here —
+  // on success, onAuthStateChanged in the parent already swaps to step 2.
+  useEffect(() => {
+    getRedirectResult(auth).catch((err) => setError(readableAuthError(err)));
+  }, []);
+
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setLoading(true);
@@ -90,14 +97,10 @@ function AccountStep({ hasStepParam }: { hasStepParam: boolean }) {
   }
 
   async function handleGoogleSignUp() {
-    setLoading(true);
     setError(null);
-    try {
-      await signInWithPopup(auth, new GoogleAuthProvider());
-    } catch (err) {
-      setError(readableAuthError(err));
-      setLoading(false);
-    }
+    // Popup-based sign-in gets blocked by a lot of real browsers (Safari
+    // ITP, popup blockers, mobile in-app browsers) — redirect is reliable.
+    await signInWithRedirect(auth, new GoogleAuthProvider());
   }
 
   return (

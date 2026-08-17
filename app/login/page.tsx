@@ -1,8 +1,13 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import {
+  signInWithEmailAndPassword,
+  signInWithRedirect,
+  getRedirectResult,
+  GoogleAuthProvider,
+} from "firebase/auth";
 import { LogIn, Loader2 } from "lucide-react";
 import { auth } from "@/lib/firebase";
 
@@ -12,6 +17,20 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [checkingRedirect, setCheckingRedirect] = useState(true);
+
+  // Popup-based Google sign-in gets blocked by a lot of real browsers
+  // (Safari ITP, popup blockers, mobile in-app browsers) — redirect is the
+  // reliable path, so this picks the result back up after Google sends the
+  // user back here.
+  useEffect(() => {
+    getRedirectResult(auth)
+      .then((result) => {
+        if (result) router.push("/admin");
+      })
+      .catch((err) => setError(readableAuthError(err)))
+      .finally(() => setCheckingRedirect(false));
+  }, [router]);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -28,16 +47,8 @@ export default function LoginPage() {
   }
 
   async function handleGoogleSignIn() {
-    setLoading(true);
     setError(null);
-    try {
-      await signInWithPopup(auth, new GoogleAuthProvider());
-      router.push("/admin");
-    } catch (err) {
-      setError(readableAuthError(err));
-    } finally {
-      setLoading(false);
-    }
+    await signInWithRedirect(auth, new GoogleAuthProvider());
   }
 
   return (
@@ -88,9 +99,10 @@ export default function LoginPage() {
         <button
           type="button"
           onClick={handleGoogleSignIn}
-          disabled={loading}
-          className="w-full px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 border border-white/10 text-white text-sm font-semibold disabled:opacity-50"
+          disabled={loading || checkingRedirect}
+          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 border border-white/10 text-white text-sm font-semibold disabled:opacity-50"
         >
+          {checkingRedirect && <Loader2 className="w-4 h-4 animate-spin" />}
           Continue with Google
         </button>
       </div>
