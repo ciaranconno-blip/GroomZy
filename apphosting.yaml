@@ -51,3 +51,8 @@ env:
   - variable: GOOGLE_OAUTH_REDIRECT_URI
     value: "https://groomzy--groomzy-booking-app.europe-west4.hosted.app/api/auth/google/callback"
     availability: [RUNTIME]
+
+  # Resend — sends the "new groomer signed up" notification email.
+  - variable: RESEND_API_KEY
+    secret: resend-api-key
+    availability: [RUNTIME]
