@@ -1,5 +1,29 @@
 import Link from "next/link";
-import { ArrowRight, CalendarCheck2, Scissors, ShieldCheck, Sparkles } from "lucide-react";
+import { ArrowRight, CalendarCheck2, Scissors, ShieldCheck, Sparkles, Check } from "lucide-react";
+
+const PRICING_TIERS = [
+  {
+    name: "Solo",
+    price: 25,
+    blurb: "One groomer, one calendar.",
+    features: ["Your own booking page", "Two-path booking (instant + consultation)", "Google Calendar sync", "Daily brief & waitlist"],
+    available: true,
+  },
+  {
+    name: "Team of 2",
+    price: 35,
+    blurb: "For a business with a second groomer.",
+    features: ["Everything in Solo", "A second groomer on the same booking page"],
+    available: false,
+  },
+  {
+    name: "Team of 3–5",
+    price: 55,
+    blurb: "For a bigger grooming team.",
+    features: ["Everything in Solo", "Up to 5 groomers on the same booking page"],
+    available: false,
+  },
+];
 
 const FEATURES = [
   {
@@ -60,6 +84,45 @@ export default function MarketingHomePage() {
             <p className="text-xs text-white/60 leading-relaxed">{f.body}</p>
           </div>
         ))}
+      </section>
+
+      <section className="space-y-4">
+        <div className="text-center max-w-xl mx-auto space-y-1.5">
+          <h2 className="text-xl font-bold text-white">Pricing</h2>
+          <p className="text-xs text-white/50">
+            One flat fee, no booking commission. Billing isn&apos;t live yet —
+            sign up free while we finish rolling it out.
+          </p>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          {PRICING_TIERS.map((tier) => (
+            <div key={tier.name} className={`glass-card p-5 space-y-3 ${!tier.available ? "opacity-70" : "border-violet-400/30"}`}>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-sm font-bold text-white">{tier.name}</h3>
+                  {!tier.available && (
+                    <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-white/10 text-white/50">
+                      Coming soon
+                    </span>
+                  )}
+                </div>
+                <p className="text-[11px] text-white/50 mt-0.5">{tier.blurb}</p>
+              </div>
+              <div className="flex items-baseline gap-1">
+                <span className="text-2xl font-bold text-white">€{tier.price}</span>
+                <span className="text-xs text-white/40">/month</span>
+              </div>
+              <ul className="space-y-1.5">
+                {tier.features.map((f) => (
+                  <li key={f} className="flex items-start gap-1.5 text-[11px] text-white/60">
+                    <Check className="w-3 h-3 text-violet-300 mt-0.5 flex-shrink-0" />
+                    <span>{f}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
       </section>
 
       <section className="glass-card p-5 text-center space-y-2">
