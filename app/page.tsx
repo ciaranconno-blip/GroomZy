@@ -98,7 +98,7 @@ export default function MarketingHomePage() {
             src="/marketing/calendar-phone.png"
             alt="GroomZy calendar — mobile day view"
             width={640}
-            height={1205}
+            height={1187}
             className="w-full max-w-[280px] rounded-[2rem] shadow-2xl shadow-violet-950/50"
           />
         </div>
