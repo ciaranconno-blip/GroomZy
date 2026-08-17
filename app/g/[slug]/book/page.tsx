@@ -5,7 +5,6 @@ import { Check, ChevronRight, ChevronLeft, PhoneCall, CalendarCheck, Loader2 } f
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import {
   BREEDS,
-  SERVICES,
   UNSURE_DOUBLE_COAT,
   OTHER_MIXED_BREED,
   findBreed,
@@ -40,7 +39,7 @@ export default function BookPage() {
   // Step 1 state
   const [breedId, setBreedId] = useState<string>("");
   const [unsureAnswer, setUnsureAnswer] = useState<"single" | "double" | "not_sure" | undefined>();
-  const [serviceId, setServiceId] = useState<string>(SERVICES[0].id);
+  const [serviceId, setServiceId] = useState<string>(business.services[0]?.id ?? "");
 
   // Step 2 state (direct path only)
   const [selectedDate, setSelectedDate] = useState<string>("");
@@ -75,7 +74,7 @@ export default function BookPage() {
     setSubmitting(true);
     setSubmitError(null);
 
-    const service = SERVICES.find((s) => s.id === serviceId);
+    const service = business.services.find((s) => s.id === serviceId);
     const basePayload = {
       businessId: business.id,
       ownerId: business.ownerId,
@@ -220,7 +219,7 @@ export default function BookPage() {
           <div className="glass-card p-4 space-y-3">
             <label className="text-xs font-bold uppercase tracking-widest text-white/50">Service</label>
             <div className="grid grid-cols-1 gap-2">
-              {SERVICES.filter((s) => s.priceFrom !== null).map((s) => (
+              {business.services.filter((s) => s.priceFrom !== null).map((s) => (
                 <button
                   key={s.id}
                   type="button"

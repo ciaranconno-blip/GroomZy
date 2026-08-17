@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { Info, Clock, ArrowRight, AlertTriangle } from "lucide-react";
-import { SERVICES, BREEDS } from "@/lib/breeds";
+import { BREEDS } from "@/lib/breeds";
+import { getBusinessBySlug } from "@/lib/business-lookup";
 
 export default async function ServicesPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
+  const business = (await getBusinessBySlug(slug))!; // layout.tsx already 404s if missing
   const directBreeds = BREEDS.filter((b) => b.defaultPath === "direct");
   const enquiryBreeds = BREEDS.filter((b) => b.defaultPath === "enquiry");
 
@@ -27,7 +29,7 @@ export default async function ServicesPage({ params }: { params: Promise<{ slug:
       <section className="space-y-3">
         <h2 className="text-xs font-bold uppercase tracking-widest text-white/50">Services</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {SERVICES.map((s) => (
+          {business.services.map((s) => (
             <div key={s.id} className="glass-card p-4 flex items-center justify-between gap-3">
               <div>
                 <div className="text-sm font-bold text-white">{s.name}</div>

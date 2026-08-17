@@ -3,11 +3,12 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { collection, query, where, limit, getDocs, doc, updateDoc } from "firebase/firestore";
-import { Loader2, Save, Check, ArrowLeft } from "lucide-react";
+import { Loader2, Save, Check, ArrowLeft, Plus, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { db } from "@/lib/firebase";
 import { useAuth } from "@/lib/useAuth";
 import type { Business } from "@/lib/business";
+import { DEFAULT_SERVICES, type ServiceOption } from "@/lib/breeds";
 
 export default function BusinessSettingsPage() {
   const { user, loading: authLoading } = useAuth();
@@ -22,6 +23,7 @@ export default function BusinessSettingsPage() {
   const [instagram, setInstagram] = useState("");
   const [facebook, setFacebook] = useState("");
   const [googleReviews, setGoogleReviews] = useState("");
+  const [services, setServices] = useState<ServiceOption[]>([]);
 
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -48,12 +50,30 @@ export default function BusinessSettingsPage() {
       setInstagram(b.socials?.instagram ?? "");
       setFacebook(b.socials?.facebook ?? "");
       setGoogleReviews(b.socials?.googleReviews ?? "");
+      // Older business docs predate the services field — fall back to the
+      // same starting list a new signup gets, rather than an empty page.
+      setServices(b.services?.length ? b.services : DEFAULT_SERVICES.map((s) => ({ ...s })));
       setLoading(false);
     });
   }, [user, router]);
 
   function updateHour(day: string, field: "open" | "close" | "closed", value: string | boolean) {
     setHours((prev) => prev.map((h) => (h.day === day ? { ...h, [field]: value } : h)));
+  }
+
+  function updateService(id: string, field: keyof ServiceOption, value: string | number | null) {
+    setServices((prev) => prev.map((s) => (s.id === id ? { ...s, [field]: value } : s)));
+  }
+
+  function addService() {
+    setServices((prev) => [
+      ...prev,
+      { id: crypto.randomUUID(), name: "", durationLabel: "", priceFrom: null },
+    ]);
+  }
+
+  function removeService(id: string) {
+    setServices((prev) => prev.filter((s) => s.id !== id));
   }
 
   async function handleSubmit(e: FormEvent) {
@@ -67,6 +87,7 @@ export default function BusinessSettingsPage() {
         tagline,
         phone,
         hours,
+        services: services.filter((s) => s.name.trim()),
         socials: {
           ...(instagram && { instagram }),
           ...(facebook && { facebook }),
@@ -118,6 +139,60 @@ export default function BusinessSettingsPage() {
             required
             className="w-full glass-input text-sm px-3 py-2.5"
           />
+        </div>
+
+        <div className="glass-card p-4 space-y-3">
+          <label className="text-xs font-bold uppercase tracking-widest text-white/50">Services &amp; Pricing</label>
+          <p className="text-[11px] text-white/40 -mt-1">
+            Shown on your public services page and as booking options. Leave price blank for &quot;enquiry only&quot;.
+          </p>
+          {services.map((s) => (
+            <div key={s.id} className="flex items-start gap-2">
+              <div className="flex-1 space-y-1.5">
+                <input
+                  value={s.name}
+                  onChange={(e) => updateService(s.id, "name", e.target.value)}
+                  placeholder="Service name"
+                  className="w-full glass-input text-sm px-3 py-2"
+                />
+                <div className="flex gap-1.5">
+                  <input
+                    value={s.durationLabel}
+                    onChange={(e) => updateService(s.id, "durationLabel", e.target.value)}
+                    placeholder="Duration (e.g. 30–45 min)"
+                    className="flex-1 glass-input text-xs px-3 py-1.5"
+                  />
+                  <div className="flex items-center gap-1 glass-input px-2 py-1.5 w-28 flex-shrink-0">
+                    <span className="text-xs text-white/40">€</span>
+                    <input
+                      type="number"
+                      min={0}
+                      value={s.priceFrom ?? ""}
+                      onChange={(e) =>
+                        updateService(s.id, "priceFrom", e.target.value === "" ? null : Number(e.target.value))
+                      }
+                      placeholder="Enquiry"
+                      className="w-full bg-transparent text-xs text-white outline-none placeholder:text-white/30"
+                    />
+                  </div>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => removeService(s.id)}
+                className="p-2 rounded-lg bg-white/5 border border-white/10 text-white/40 hover:text-red-300 flex-shrink-0"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={addService}
+            className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-white/5 border border-dashed border-white/15 text-white/50 hover:text-white/80 text-xs font-semibold"
+          >
+            <Plus className="w-3.5 h-3.5" /> Add Service
+          </button>
         </div>
 
         <div className="glass-card p-4 space-y-3">

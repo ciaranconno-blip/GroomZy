@@ -4,6 +4,8 @@
 // GroomerMapLoader need no changes; they already take a profile object as
 // a parameter, not a global import.
 
+import type { ServiceOption } from "./breeds";
+
 export type SubscriptionStatus = "trialing" | "active" | "past_due" | "canceled" | "incomplete";
 
 export interface Business {
@@ -20,6 +22,7 @@ export interface Business {
   lng: number;
   phone: string;
   hours: { day: string; open: string; close: string; closed?: boolean }[];
+  services: ServiceOption[]; // each business's own price list — seeded from DEFAULT_SERVICES at signup, editable in /admin/settings
   rating: number;
   reviewCount: number;
   socials: { instagram?: string; facebook?: string; googleReviews?: string };

@@ -14,6 +14,7 @@ import { collection, query, where, limit, getDocs, addDoc, serverTimestamp } fro
 import { Loader2, MapPin, CheckCircle2, XCircle, Mail } from "lucide-react";
 import { auth, db } from "@/lib/firebase";
 import { DEFAULT_HOURS, slugify, type Business } from "@/lib/business";
+import { DEFAULT_SERVICES } from "@/lib/breeds";
 import { sendMagicLink, completeMagicLinkSignIn } from "@/lib/magicLink";
 
 export default function SignupPage() {
@@ -325,6 +326,7 @@ function BusinessProfileStep() {
         lng: coords.lng,
         phone,
         hours,
+        services: DEFAULT_SERVICES.map((s) => ({ ...s })),
         rating: 0,
         reviewCount: 0,
         socials: {},

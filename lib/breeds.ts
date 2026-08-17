@@ -136,7 +136,7 @@ export interface ServiceOption {
 }
 
 // [CARRIED OVER v1] — real prices validated with the client.
-export const SERVICES: ServiceOption[] = [
+export const DEFAULT_SERVICES: ServiceOption[] = [
   { id: "full_groom_small", name: "Full Groom (small / single-coat)", durationLabel: "30–45 min", priceFrom: 45 },
   { id: "full_groom_medium", name: "Full Groom (medium single-coat)", durationLabel: "~60 min", priceFrom: 60 },
   { id: "bath_blow_dry", name: "Bath & Blow Dry", durationLabel: "~30 min", priceFrom: 30 },
