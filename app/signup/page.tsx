@@ -304,6 +304,23 @@ function BusinessProfileStep() {
   const canSubmit =
     businessName && address && town && county && phone && coords && slugStatus === "available" && !submitting;
 
+  // Every independent reason Complete Setup could still be disabled, spelled
+  // out — a plain disabled button with no explanation is exactly what turned
+  // one fixable field (eircode reordering) into "the form is just broken".
+  const missingRequirements = [
+    !businessName && "Business name",
+    !address && "Street address",
+    !town && "Town",
+    !county && "County",
+    !phone && "Phone number",
+    slugStatus === "taken" && "Choose a different booking page URL — this one's already taken",
+    slugStatus === "checking" && "Still checking that URL's availability…",
+    businessName && slugStatus === "idle" && "Type a booking page URL (or edit the business name so one can be generated)",
+    businessName && address && town && county && !coords && 'Click "Locate my business on the map" above',
+  ].filter((m): m is string => Boolean(m));
+
+  const hasStartedForm = Boolean(businessName || address || town || county || phone);
+
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     if (!canSubmit || !coords) return;
@@ -488,9 +505,14 @@ function BusinessProfileStep() {
           ))}
         </div>
 
-        {!coords && businessName && address && town && county && phone && (
-          <div className="glass-card p-3 text-xs text-amber-300 border-amber-400/30 bg-amber-500/5">
-            Click &quot;Locate my business on the map&quot; above before continuing — the pin needs to match your current address.
+        {hasStartedForm && missingRequirements.length > 0 && (
+          <div className="glass-card p-3 text-xs text-amber-300 border-amber-400/30 bg-amber-500/5 space-y-1">
+            <p className="font-semibold">Before you can finish setup:</p>
+            <ul className="list-disc list-inside space-y-0.5">
+              {missingRequirements.map((m) => (
+                <li key={m}>{m}</li>
+              ))}
+            </ul>
           </div>
         )}
 
