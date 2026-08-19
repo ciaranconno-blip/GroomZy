@@ -38,11 +38,19 @@ jobs:
       # third-party action or token required (the marketplace "ClamAV"
       # actions commonly seen in templates are often actually Snyk in
       # disguise, gated behind a SNYK_TOKEN secret this repo doesn't have).
+      #
+      # freshclam (the signature updater) talks to ClamAV's public mirror
+      # network, which is notoriously slow/rate-limited from shared CI
+      # runners and can hang well past any reasonable wait — bounded with
+      # a shell-level timeout plus a step-level backstop so a slow mirror
+      # degrades to "scan with the signatures apt just installed" instead
+      # of blocking the whole workflow.
       - name: ClamAV virus scan
+        timeout-minutes: 5
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y clamav
-          sudo freshclam --quiet || true
+          timeout 60 sudo freshclam --quiet || echo "freshclam unavailable/slow — scanning with bundled signatures"
           clamscan -r --infected \
             --exclude-dir='^\./node_modules' \
             --exclude-dir='^\./\.git' \
