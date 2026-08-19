@@ -272,7 +272,12 @@ function BusinessProfileStep() {
   // The located pin is only valid for the address it was found for — an old
   // lat/lng silently surviving a since-edited address would mislocate the
   // business, so treat it as stale (not stored/reset) once anything changes.
-  const addressKey = `${address}|${town}|${county}|${eircode}`;
+  // Eircode is deliberately excluded: it's a precision add-on to an address
+  // that's already been geocoded, not something that should discard a
+  // perfectly good location — editing it after the fact (a very natural
+  // "oh, let me add that" order) used to silently re-disable Complete Setup
+  // with no clear explanation.
+  const addressKey = `${address}|${town}|${county}`;
   const coords = locatedFor === addressKey ? locatedCoords : null;
 
   function updateHour(day: string, field: "open" | "close" | "closed", value: string | boolean) {
@@ -482,6 +487,12 @@ function BusinessProfileStep() {
             </div>
           ))}
         </div>
+
+        {!coords && businessName && address && town && county && phone && (
+          <div className="glass-card p-3 text-xs text-amber-300 border-amber-400/30 bg-amber-500/5">
+            Click &quot;Locate my business on the map&quot; above before continuing — the pin needs to match your current address.
+          </div>
+        )}
 
         {submitError && (
           <div className="glass-card p-3 text-xs text-red-300 border-red-400/30 bg-red-500/5">{submitError}</div>
