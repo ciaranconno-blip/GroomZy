@@ -45,14 +45,18 @@ jobs:
       # a shell-level timeout plus a step-level backstop so a slow mirror
       # degrades to "scan with the signatures apt just installed" instead
       # of blocking the whole workflow.
+      #
+      # Scans exactly the files git tracks (via `git ls-files`) rather than
+      # the working directory with --exclude-dir patterns — clamscan's
+      # exclude-dir regex is matched against however it internally
+      # normalizes the path, which doesn't reliably match a literal `./`
+      # prefix, so an excluded node_modules could still get pulled in.
+      # git ls-files sidesteps that entirely: it can never list node_modules,
+      # .git, or .next since none of that is tracked.
       - name: ClamAV virus scan
         timeout-minutes: 5
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y clamav
           timeout 60 sudo freshclam --quiet || echo "freshclam unavailable/slow — scanning with bundled signatures"
-          clamscan -r --infected \
-            --exclude-dir='^\./node_modules' \
-            --exclude-dir='^\./\.git' \
-            --exclude-dir='^\./\.next' \
-            .
+          git ls-files -z | xargs -0 clamscan --infected --
