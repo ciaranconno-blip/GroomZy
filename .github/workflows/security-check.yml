@@ -1,0 +1,50 @@
+name: Security and Fault Checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  audit-and-scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Get the code from the repository
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Set up Node.js environment
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      # 3. Install project dependencies
+      - name: Install dependencies
+        run: npm ci
+
+      # 4. Check for code faults and formatting errors (ESLint)
+      - name: Run code fault check
+        run: npm run lint
+
+      # 5. Check for known vulnerabilities in dependencies
+      - name: Run npm security audit
+        run: npm audit --audit-level=high
+
+      # 6. Scan repository files for malware — a real ClamAV scan, no
+      # third-party action or token required (the marketplace "ClamAV"
+      # actions commonly seen in templates are often actually Snyk in
+      # disguise, gated behind a SNYK_TOKEN secret this repo doesn't have).
+      - name: ClamAV virus scan
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y clamav
+          sudo freshclam --quiet || true
+          clamscan -r --infected \
+            --exclude-dir='^\./node_modules' \
+            --exclude-dir='^\./\.git' \
+            --exclude-dir='^\./\.next' \
+            .

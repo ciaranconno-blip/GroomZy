@@ -83,24 +83,25 @@ function AdminPageInner() {
   const [dataLoading, setDataLoading] = useState(true);
   const [dataError, setDataError] = useState<string | null>(null);
 
-  const [calendarConnected, setCalendarConnected] = useState<boolean | null>(null);
-  const [calendarBanner, setCalendarBanner] = useState<string | null>(null);
+  // Read once via lazy initializers (evaluated during render, not in an
+  // effect) rather than setState-in-effect — this only ever needs to fire
+  // on the initial mount right after the OAuth redirect lands.
+  const [calendarConnected, setCalendarConnected] = useState<boolean | null>(() =>
+    searchParams.get("calendar") === "connected" ? true : null
+  );
+  const [calendarBanner, setCalendarBanner] = useState<string | null>(() => {
+    const status = searchParams.get("calendar");
+    const err = searchParams.get("calendar_error");
+    if (status === "connected") return "Google Calendar connected — new bookings will sync automatically.";
+    if (err) return err === "access_denied" ? "Calendar connection cancelled." : "Couldn't connect Google Calendar — try again.";
+    return null;
+  });
 
   const [insights, setInsights] = useState<{ totalBookings: number; totalEnquiries: number } | null>(null);
 
   useEffect(() => {
     const status = searchParams.get("calendar");
     const err = searchParams.get("calendar_error");
-    if (status === "connected") {
-      setCalendarConnected(true);
-      setCalendarBanner("Google Calendar connected — new bookings will sync automatically.");
-    } else if (err) {
-      setCalendarBanner(
-        err === "access_denied"
-          ? "Calendar connection cancelled."
-          : "Couldn't connect Google Calendar — try again."
-      );
-    }
     if (status || err) router.replace("/admin");
   }, [searchParams, router]);
 
